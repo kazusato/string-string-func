@@ -1,0 +1,65 @@
+plugins {
+    id "com.microsoft.azure.azurefunctions" version "1.4.0"
+    id "org.jetbrains.kotlin.jvm" version "1.3.72"
+    id "org.jetbrains.kotlin.plugin.spring" version "1.3.72"
+}
+
+group 'dev.kazusato'
+version '0.1.0'
+
+dependencies {
+    implementation 'org.jetbrains.kotlin:kotlin-reflect'
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
+    implementation 'org.springframework.cloud:spring-cloud-function-adapter-azure:3.0.10.RELEASE'
+    compileOnly 'org.springframework.cloud:spring-cloud-starter-function-web:3.0.10.RELEASE'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.7.0'
+    testImplementation 'org.mockito:mockito-core:3.5.11'
+}
+
+java.sourceCompatibility = JavaVersion.VERSION_1_8
+java.targetCompatibility = JavaVersion.VERSION_1_8
+
+compileKotlin {
+    kotlinOptions {
+        freeCompilerArgs = ["-Xjsr305=strict"]
+        jvmTarget = "1.8"
+    }
+}
+compileTestKotlin {
+    kotlinOptions {
+        freeCompilerArgs = ["-Xjsr305=strict"]
+        jvmTarget = "1.8"
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'dev.kazusato.azfunc.stringstring.StringStringFunction'
+    }
+}
+
+azurefunctions {
+    resourceGroup = 'java-functions-group'
+    appName = 'kseventhubfunc'
+    pricingTier = 'Consumption'
+    region = 'japaneast'
+    runtime {
+        os = 'windows'
+        javaVersion = '8'
+    }
+    appSettings {
+        WEBSITE_RUN_FROM_PACKAGE = '1'
+        FUNCTIONS_EXTENSION_VERSION = '~3'
+        FUNCTIONS_WORKER_RUNTIME = 'java'
+        MAIN_CLASS = 'dev.kazusato.azfunc.stringstring.StringStringFunction'
+    }
+    localDebug = "transport=dt_socket,server=y,suspend=n,address=5005"
+}
+
+wrapper {
+    gradleVersion = '6.6.1'
+}
